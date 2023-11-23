@@ -13,12 +13,15 @@ const userSchema = new Schema(
       required: [true, "Email field cannot be empty"],
       lowercase: true,
       unique: true,
-      validate : [validator.isEmail,'Please enter proper email']
+      validate: [validator.isEmail, "Please enter proper email"],
     },
     role: {
       type: String,
-      enum: ["user", "admin", "author"],
-      default: "admin",
+      enum: {
+        values: ["user", "admin", "author"],
+        message : `{VALUE} => this role is not defined`
+      },
+      default : "admin"
     },
     password: {
       type: String,
@@ -33,7 +36,7 @@ const userSchema = new Schema(
         validator: function () {
           return this.password === this.confirmPassword; /////This will return boolean
         },
-        message : 'Password doesnot match, Please type proper password'
+        message: "Password doesnot match, Please type proper password",
       },
     },
   },

@@ -33,4 +33,29 @@ const auth =async (req, res, next) =>{
         })
     }
 }
-module.exports = auth;
+
+// const verifyRole = (role) =>{
+//     return (req,res,next)=>{
+//         if(req.user.role !== role){
+//             return res.status(400).json({
+//                 status : 'fail',
+//                 message : 'You are not authorized'
+//             })
+//         }
+//         next()
+//     }
+// }
+
+const verifyRole = (role) =>{
+    return (req,res,next)=>{
+        if(!role.includes(req.user.role)){
+            return res.status(400).json({
+                status : 'fail',
+                message : 'You are not authorized'
+            })
+        }
+        next()
+    }
+}
+
+module.exports = {auth, verifyRole};
