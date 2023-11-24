@@ -44,7 +44,14 @@ const getByAuthor = async (req,res)=>{
 
 const getBlogs = async (req,res) =>{
     try {
-        let newBlogs = await blogs.find()
+        // console.log(req.query);
+        let search = req.query.search || ""
+        // console.log(search);
+        let page = req.query.page || 1
+        let limit = req.query.limit*3 || 3
+        let skip = (page -1)*limit
+        let author = req.query.author || ""
+        let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).where("author").in([author]).skip(skip).limit(limit)
         res.status(200).json({
             status : 'success',
             data : {
