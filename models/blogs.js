@@ -1,4 +1,5 @@
 const {Schema, model} = require("mongoose")
+const User = require('./User')
 const blogSchema = new Schema({
     title : {
         type : String,
@@ -22,6 +23,16 @@ const blogSchema = new Schema({
     image : {
         type : [String],
         default : "https://static.thenounproject.com/png/4595376-200.png"
+    },
+    ratings : {
+        type : Number,
+        default : 1,
+        validator : {
+            validate : function(value){
+                return value >= 1 && value <=5;
+            },
+            message : "ratings should be between 1 and 5"
+        }
     }
 })
 module.exports = model("blog", blogSchema)

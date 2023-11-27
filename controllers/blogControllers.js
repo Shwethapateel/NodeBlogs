@@ -47,13 +47,20 @@ const getBlogs = async (req,res) =>{
         // console.log(req.query);
         let search = req.query.search || ""
         // console.log(search);
-        let page = req.query.page || 1
-        let limit = req.query.limit*3 || 3
+        let page = req.query.page *1|| 1
+        let limit = req.query.limit*1 || 2
+        let sort = req.query.sort || "rating"
         let skip = (page -1)*limit
-        let author = req.query.author || ""
-        let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).where("author").in([author]).skip(skip).limit(limit)
+        sort && sort.split(",").join(" ")
+        // let author = req.query.author || ""
+        // let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).where("author").in([author]).skip(skip).limit(limit)
+        let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).skip(skip).limit(limit).sort(sort)
+        let totalBlogs = await blogs.countDocuments()
         res.status(200).json({
             status : 'success',
+            page,
+            limit,
+            totalBlogs,
             data : {
                 newBlogs
             }
