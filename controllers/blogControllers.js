@@ -93,13 +93,25 @@ const getBlog = async (req,res) =>{
 const updateBlog = async (req,res) =>{
     try {
         const {id} = req.params
-        const updatedBlog = await blogs.findByIdAndUpdate(id, req.body,{new : true})
-        res.status(200).json({
-            status : "success",
-            data : {
-                updatedBlog
-            }
-        })
+        const {description, snippet, title, image, ratings} = req.body
+        if(req.user.role === 'author'){
+            const updatedBlog = await blogs.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description, image:image}},{new:true, runValidators:true})
+            res.status(200).json({
+                status : "success",
+                data : {
+                    updatedBlog
+                }
+            })
+        }
+        if(req.user.role === 'user'){
+            const updatedBlog = await blogs.findByIdAndUpdate({_id:id},{$set:{ratings:ratings}},{new:true, runValidators:true})
+            res.status(200).json({
+                status : "success",
+                data : {
+                    updatedBlog
+                }
+            })
+        }
     } catch (error) {
         res.status(400).json({
             status: "fail",

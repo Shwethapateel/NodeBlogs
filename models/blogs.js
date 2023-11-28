@@ -27,12 +27,8 @@ const blogSchema = new Schema({
     ratings : {
         type : Number,
         default : 1,
-        validator : {
-            validate : function(value){
-                return value >= 1 && value <=5;
-            },
-            message : "ratings should be between 1 and 5"
-        }
+        min : [1, 'above 1'],
+        max : [5 , 'below 5']
     }
 })
 module.exports = model("blog", blogSchema)
