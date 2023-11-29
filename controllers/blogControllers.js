@@ -1,28 +1,22 @@
-const blogs = require("../models/blogs");
+const blogs = require("../models/blogs")
+const asyncErrorHandler = require('../utils/asyncErrorHandler.js')
 
-const postBlog = async (req,res)=>{
-    try {
-        let user = req.user;
-        const newBlog = await blogs.create({
-            title : req.body.title,
-            snippet : req.body.snippet,
-            description : req.body.description,
-            image : req.body.image,
-            author : user._id
-        })
-        res.status(201).json({
-            status : 'success',
-            data : {
-                newBlog
-            }
-        })
-    } catch (error) {
-       res.status(400).json({
-         status: "fail",
-         message : error.message
-       }); 
-    }
-}
+const postBlog =  asyncErrorHandler(async (req,res)=>{
+    let user = req.user
+    const newBlog = await blogs.create({
+        title : req.body.title,
+        snippet : req.body.snippet,
+        description : req.body.description,
+        image : req.body.image,
+        author : user._id
+    })
+    res.status(201).json({
+        status : 'success',
+        data : {
+            newBlog
+        }
+    })
+})
 
 const getByAuthor = async (req,res)=>{
     try {
@@ -38,7 +32,7 @@ const getByAuthor = async (req,res)=>{
        res.status(400).json({
          status: "fail",
          message : error.message
-       }); 
+       })
     }
 }
 
@@ -85,8 +79,8 @@ const getBlog = async (req,res) =>{
     } catch (error) {
         res.status(400).json({
             status: "fail",
-            message: error.message,
-        });
+            message: error.message
+        })
     }
 }
 
@@ -115,8 +109,8 @@ const updateBlog = async (req,res) =>{
     } catch (error) {
         res.status(400).json({
             status: "fail",
-            message: error.message,
-        });
+            message: error.message
+        })
     }
 }
 
@@ -131,8 +125,8 @@ const deleteBlog = async (req,res) =>{
     } catch (error) {
         res.status(400).json({
             status: "fail",
-            message: error.message,
-        });
+            message: error.message
+        })
     }
 }
 

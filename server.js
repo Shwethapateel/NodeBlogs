@@ -2,6 +2,7 @@ require('dotenv').config()
 const http = require('http')
 const mongoose = require('mongoose')
 const app = require('./app')
+const { log } = require('console')
 const PORT = process.env.PORT
 const MONGOLOCAL_URL = process.env.MONGOLOCAL_URL
 
@@ -13,6 +14,7 @@ mongoose.connect(MONGOLOCAL_URL).then(()=>{
     console.log(err)
 })
 server.listen(PORT,(err)=>{
-    if(err)console.log(err);
-    console.log(`Listening on port number - ${PORT}`);
+    if(err)console.log(err)
+    console.log(`Listening on port number - ${PORT}`)
 })
+// console.log(process.env)

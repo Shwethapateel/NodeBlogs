@@ -13,7 +13,7 @@ const auth =async (req, res, next) =>{
             return res.status(401).json({
               status: "Fail",
               message: "Try logging in, to access",
-            });
+            })
         }
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         // console.log(decodedToken);
@@ -22,7 +22,7 @@ const auth =async (req, res, next) =>{
                return res.status(401).json({
                status: "Fail",
                message: "User no longer exists",
-            }); 
+            })
         }
         req.user = user
         next()
@@ -58,4 +58,4 @@ const verifyRole = (role) =>{
     }
 }
 
-module.exports = {auth, verifyRole};
+module.exports = {auth, verifyRole}

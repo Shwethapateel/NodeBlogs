@@ -17,4 +17,4 @@ router.patch(":/id", auth,verifyRole(["author"]), updateBlog)
 router.patch("ratings/:id", auth, verifyRole(["user"]),updateBlog)
 router.delete("/:id",auth, verifyRole(["admin", "author"]), deleteBlog)
 
-module.exports = router;
+module.exports = router
