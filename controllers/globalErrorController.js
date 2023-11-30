@@ -31,6 +31,20 @@ const validationErrorHandler = (err) =>{
     return error
 }
 
+const duplicateErrorHandler = (err) =>{
+    let email = err.keyValue.email
+    let msg = `This email ${email} is already exists`
+    let error = new CustomError(400,msg)
+    return error
+}
+
+const handleCasteError = (err) =>{
+    let value = err.value
+    let msg = `The value ${value} is not proper ID`
+    let error = new CustomError(400, msg)
+    return error
+}
+
 module.exports = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500
     err.status = err.status || "error"
@@ -41,6 +55,12 @@ module.exports = (err, req, res, next) => {
     if (process.env.NODE_ENV === "production") {
         if(err.name === "ValidationError"){
             err = validationErrorHandler(err)
+        }
+        if(err.code === 11000){
+            err = duplicateErrorHandler(err)
+        }
+        if(err.name === "CastError"){
+            err = handleCasteError(err)
         }
         prodError(res, err)
     }
