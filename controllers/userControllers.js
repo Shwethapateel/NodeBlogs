@@ -21,25 +21,17 @@ const signup = asyncErrorHandler (async(req,res,next)=>{
 
 const login = asyncErrorHandler (async(req,res,next)=>{
     if(!req.body.email || !req.body.password){
-      // return res.status(400).json({
-      //   status : 'fail',
-      //   message : 'Please enter Credentials'
-      // })
       const err = new CustomError(400, "Please enter Credentials")
       next(err)
     }
     const existingUser = await User.findOne({email:req.body.email})
     if(!existingUser || !(await existingUser.comparePassword(req.body.password , existingUser.password))){
-      // return res.status(400).json({
-      //   status:'Fail',
-      //   message: "User name and password is not correct"
-      // })
+      const err = new CustomError(400, "User name and password is not correct")
+      next(err)
     }
-    const err = new CustomError(400, "User name and password is not correct");
-    next(err);
     // const isMatch = await existingUser.comparePassword(req.body.password , existingUser.password)  
     // console.log(isMatch);   /////this isMatch will return boolean
-    const token = await genToken(existingUser._id);
+    const token = await genToken(existingUser._id)
     res.status(200).json({
       status : 'success',
       token,

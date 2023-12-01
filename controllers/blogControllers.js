@@ -1,3 +1,4 @@
+const Rating = require("../models/Rating.js")
 const blogs = require("../models/blogs")
 const asyncErrorHandler = require('../utils/asyncErrorHandler.js')
 
@@ -18,118 +19,100 @@ const postBlog =  asyncErrorHandler(async (req,res)=>{
     })
 })
 
-const getByAuthor = async (req,res)=>{
-    try {
-        let user = req.user;
-        const authorBlogs = await blogs.find({author : user._id})
-        res.status(201).json({
-            status : 'success',
-            data : {
-                authorBlogs
-            }
-        })
-    } catch (error) {
-       res.status(400).json({
-         status: "fail",
-         message : error.message
-       })
-    }
-}
+const getByAuthor =asyncErrorHandler (async (req,res)=>{
+    let user = req.user;
+    const authorBlogs = await blogs.find({author : user._id})
+    res.status(201).json({
+        status : 'success',
+        data : {
+            authorBlogs
+        }
+    })
+})
 
-const getBlogs = async (req,res) =>{
-    try {
-        // console.log(req.query);
-        let search = req.query.search || ""
-        // console.log(search);
-        let page = req.query.page *1|| 1
-        let limit = req.query.limit*1 || 2
-        let sort = req.query.sort || "rating"
-        let skip = (page -1)*limit
-        sort && sort.split(",").join(" ")
-        // let author = req.query.author || ""
-        // let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).where("author").in([author]).skip(skip).limit(limit)
-        let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).skip(skip).limit(limit).sort(sort)
-        let totalBlogs = await blogs.countDocuments()
-        res.status(200).json({
-            status : 'success',
-            page,
-            limit,
-            totalBlogs,
-            data : {
-                newBlogs
-            }
-        })
-    } catch (error) {
-        res.status(400).json({
-            status : 'fail',
-            message : error.message
-        })
-    }
-}
+const getBlogs =asyncErrorHandler (async (req,res) =>{
+    // console.log(req.query);
+    let search = req.query.search || ""
+    // console.log(search);
+    let page = req.query.page *1|| 1
+    let limit = req.query.limit*1 || 2
+    let sort = req.query.sort || "rating"
+    let skip = (page -1)*limit
+    sort && sort.split(",").join(" ")
+    // let author = req.query.author || ""
+    // let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).where("author").in([author]).skip(skip).limit(limit)
+    let newBlogs = await blogs.find({title:{$regex:search,$options:"i"}}).skip(skip).limit(limit).sort(sort)
+    let totalBlogs = await blogs.countDocuments()
+    res.status(200).json({
+        status : 'success',
+        page,
+        limit,
+        totalBlogs,
+        data : {
+            newBlogs
+        }
+    })
+})
 
-const getBlog = async (req,res) =>{
-    try {
-        let newBlog = await blogs.findById(req.params.id)
+const getBlog = asyncErrorHandler (async (req,res) =>{
+    let newBlog = await blogs.findById(req.params.id)
+    res.status(200).json({
+        status : "success",
+        data : {
+            newBlog
+        }
+    })
+})
+
+const updateBlog =asyncErrorHandler (async (req,res) =>{
+    const {id} = req.params
+    const {description, snippet, title, image} = req.body
+    if(req.user.role === 'author'){
+        const updatedBlog = await blogs.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description, image:image}},{new:true, runValidators:true})
         res.status(200).json({
             status : "success",
             data : {
-                newBlog
+                updatedBlog
             }
         })
-    } catch (error) {
-        res.status(400).json({
-            status: "fail",
-            message: error.message
-        })
     }
-}
+    
+})
 
-const updateBlog = async (req,res) =>{
-    try {
-        const {id} = req.params
-        const {description, snippet, title, image, ratings} = req.body
-        if(req.user.role === 'author'){
-            const updatedBlog = await blogs.findByIdAndUpdate({_id:id},{$set:{title:title,snippet:snippet,description:description, image:image}},{new:true, runValidators:true})
-            res.status(200).json({
-                status : "success",
-                data : {
-                    updatedBlog
-                }
-            })
-        }
-        if(req.user.role === 'user'){
-            const updatedBlog = await blogs.findByIdAndUpdate({_id:id},{$set:{ratings:ratings}},{new:true, runValidators:true})
-            res.status(200).json({
-                status : "success",
-                data : {
-                    updatedBlog
-                }
-            })
-        }
-    } catch (error) {
-        res.status(400).json({
-            status: "fail",
-            message: error.message
-        })
-    }
-}
+const deleteBlog =asyncErrorHandler (async (req,res) =>{
+    await blogs.findByIdAndDelete(req.params.id)
+    res.status(200).json({
+        status : 'success',
+        data : null
+    })
+    
+})
 
-const deleteBlog = async (req,res) =>{
-    try {
-        let user = req.user
-        await blogs.findByIdAndDelete(req.params.id)
-        res.status(200).json({
-            status : 'success',
-            data : null
-        })
-    } catch (error) {
-        res.status(400).json({
-            status: "fail",
-            message: error.message
-        })
-    }
-}
+let postRating = asyncErrorHandler(async (req,res) =>{
+    let userId = req.user._id
+    let blogId = req.params.id
+    let rating = await Rating.create({ratings: req.body.ratings, userId:userId, blogId:blogId})
+    res.status(200).json({
+        status : "success",
+        blogId,
+        data : {
+            rating
+        }
+    })
+})
+
+let getRatings = asyncErrorHandler(async (req,res) =>{
+    let blogId = req.params.id
+    let rating =await Rating.find({blogId:blogId})
+    res.status(200).json({
+        status : "success",
+        blogId,
+        data : {
+            rating
+        }
+    })
+})
 
 module.exports = {
-  postBlog, getBlogs, getBlog, updateBlog, deleteBlog, getByAuthor
+  postBlog, getBlogs, getBlog, updateBlog, deleteBlog, getByAuthor, postRating, getRatings
 }

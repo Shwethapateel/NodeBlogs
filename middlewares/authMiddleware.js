@@ -5,17 +5,13 @@ const CustomError = require('../utils/CustomError.js')
 
 const auth = asyncErrorHandler (async (req, res, next) =>{
     let testToken = req.headers.authorization
-    // console.log(testToken);
-    let token
+    // console.log(testToken)
+    let token;
     if(testToken && testToken.startsWith("Bearer")){
         token = testToken.split(" ")[1]
     }
     // console.log(token);
     if(!token){
-        // return res.status(401).json({
-        //   status: "Fail",
-        //   message: "Try logging in, to access",
-        // })
         const err = CustomError(401, "Try logging in, to access")
         next(err)
     }
@@ -23,10 +19,6 @@ const auth = asyncErrorHandler (async (req, res, next) =>{
     // console.log(decodedToken);
     const user = await User.findById(decodedToken.id)
     if(!user){
-        //    return res.status(401).json({
-        //    status: "Fail",
-        //    message: "User no longer exists",
-        // })
         const err = CustomError(401, "User no longer exists")
         next(err)
     }
@@ -49,10 +41,6 @@ const auth = asyncErrorHandler (async (req, res, next) =>{
 const verifyRole = (role) =>{
     return (req,res,next)=>{
         if(!role.includes(req.user.role)){
-            // return res.status(400).json({
-            //     status : 'fail',
-            //     message : 'You are not authorized'
-            // })
             const err = CustomError(401, "You are not authorized")
             next(err)
         }

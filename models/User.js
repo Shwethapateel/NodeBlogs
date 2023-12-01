@@ -1,19 +1,19 @@
 const {Schema, model} = require('mongoose')
-const validator = require('validator');
+const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const userSchema = new Schema(
   {
     name: {
       type: String,
       required: [true, "Name field cannot be empty"],
-      trim: true,
+      trim: true
     },
     email: {
       type: String,
       required: [true, "Email field cannot be empty"],
       lowercase: true,
       unique: true,
-      validate: [validator.isEmail, "Please enter proper email"],
+      validate: [validator.isEmail, "Please enter proper email"]
     },
     role: {
       type: String,
@@ -26,7 +26,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: [true, "Password field cannot be empty"],
-      minlength: [8, "Password should contain above 8 charaters"],
+      minlength: [8, "Password should contain above 8 charaters"]
     },
     confirmPassword: {
       type: String,
@@ -36,7 +36,7 @@ const userSchema = new Schema(
         validator: function () {
           return this.password === this.confirmPassword; /////This will return boolean
         },
-        message: "Password doesnot match, Please type proper password",
+        message: "Password doesnot match, Please type proper password"
       },
     },
   },
@@ -50,7 +50,7 @@ userSchema.pre('save',async function(next){
 })
 
 userSchema.methods.comparePassword = async function (pwd, pwdDB) {
-  return await bcrypt.compare(pwd, pwdDB);
+  return await bcrypt.compare(pwd, pwdDB)
 };
 
 module.exports = model('user', userSchema)
