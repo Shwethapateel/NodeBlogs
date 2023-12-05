@@ -1,4 +1,4 @@
-const { loginWrapper, signupWrapper } = require("../utils/auth.js");
+const { loginWrapper, signupWrapper } = require("../utils/auth.js")
 const Admin = require("../models/Admin.js")
 
 const adminLogin = loginWrapper(Admin)

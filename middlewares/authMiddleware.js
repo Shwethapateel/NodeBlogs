@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User.js')
 const asyncErrorHandler = require('../utils/asyncErrorHandler.js')
 const CustomError = require('../utils/CustomError.js')
+const Admin = require('../models/Admin.js')
+const Author = require("../models/Author.js")
 
 const auth = asyncErrorHandler (async (req, res, next) =>{
     let testToken = req.headers.authorization
@@ -17,12 +19,18 @@ const auth = asyncErrorHandler (async (req, res, next) =>{
     }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
     // console.log(decodedToken);
-    const user = await User.findById(decodedToken.id)
-    if(!user){
-        const err = CustomError(401, "User no longer exists")
+    let Models = [User, Admin, Author]
+    let users = Models.map(async (Model) => {
+        let users = await Model.findById(decodedToken.id)
+        return users
+    })
+    users = await Promise.all(users)
+    let authorizedUser = users.filter((doc) => doc !== null)
+    if(!authorizedUser){
+        const err = new CustomError(401, "user no longer exists")
         next(err)
     }
-    req.user = user
+    req.user = authorizedUser[0]
     next()
 })
 

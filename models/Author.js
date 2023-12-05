@@ -1,7 +1,7 @@
 const {Schema, model} = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
-const userSchema = new Schema(
+const authorSchema = new Schema(
   {
     name: {
       type: String,
@@ -34,23 +34,23 @@ const userSchema = new Schema(
       /////Custom validation
       validate: {
         validator: function () {
-          return this.password === this.confirmPassword; /////This will return boolean
+          return this.password === this.confirmPassword /////This will return boolean
         },
         message: "Password doesnot match, Please type proper password"
       }
     }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
-);
-userSchema.pre('save',async function(next){
+)
+authorSchema.pre('save',async function(next){
   this.password = await bcrypt.hash(this.password, 10)
   next()
 })
 
-userSchema.methods.comparePassword = async function (pwd, pwdDB) {
+authorSchema.methods.comparePassword = async function (pwd, pwdDB) {
   return await bcrypt.compare(pwd, pwdDB)
-};
+}
 
-module.exports = model('author', userSchema)
+module.exports = model('author', authorSchema)
