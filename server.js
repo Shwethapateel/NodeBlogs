@@ -2,7 +2,6 @@ require('dotenv').config()
 const http = require('http')
 const mongoose = require('mongoose')
 const app = require('./app')
-const { log } = require('console')
 const PORT = process.env.PORT
 const MONGOLOCAL_URL = process.env.MONGOLOCAL_URL
 

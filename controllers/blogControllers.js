@@ -31,9 +31,9 @@ const getByAuthor =asyncErrorHandler (async (req,res)=>{
 })
 
 const getBlogs =asyncErrorHandler (async (req,res) =>{
-    // console.log(req.query);
+    // console.log(req.query)
     let search = req.query.search || ""
-    // console.log(search);
+    // console.log(search)
     let page = req.query.page *1|| 1
     let limit = req.query.limit*1 || 2
     let sort = req.query.sort || "rating"
@@ -116,3 +116,5 @@ let getRatings = asyncErrorHandler(async (req,res) =>{
 module.exports = {
   postBlog, getBlogs, getBlog, updateBlog, deleteBlog, getByAuthor, postRating, getRatings
 }
+
+

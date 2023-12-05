@@ -18,10 +18,10 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: {
-        values: ["user"],
+        values: ["admin"],
         message : `{VALUE} => this role is not defined`
       },
-      default : "user"
+      default : "admin"
     },
     password: {
       type: String,
@@ -53,4 +53,4 @@ userSchema.methods.comparePassword = async function (pwd, pwdDB) {
   return await bcrypt.compare(pwd, pwdDB)
 };
 
-module.exports = model('user', userSchema)
+module.exports = model('admin', userSchema)
