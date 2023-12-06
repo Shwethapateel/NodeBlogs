@@ -12,13 +12,13 @@ const auth = asyncErrorHandler (async (req, res, next) =>{
     if(testToken && testToken.startsWith("Bearer")){
         token = testToken.split(" ")[1]
     }
-    // console.log(token);
+    // console.log(token)
     if(!token){
         const err = CustomError(401, "Try logging in, to access")
         next(err)
     }
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
-    // console.log(decodedToken);
+    // console.log(decodedToken)
     let Models = [User, Admin, Author]
     let users = Models.map(async (Model) => {
         let users = await Model.findById(decodedToken.id)
@@ -26,7 +26,7 @@ const auth = asyncErrorHandler (async (req, res, next) =>{
     })
     users = await Promise.all(users)
     let authorizedUser = users.filter((doc) => doc !== null)
-    if(!authorizedUser){
+    if(!authorizedUser[0]){
         const err = new CustomError(401, "user no longer exists")
         next(err)
     }
